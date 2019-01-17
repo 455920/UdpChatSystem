@@ -11,11 +11,11 @@ class data
   public:
     data(); 
     //序列化
-    void serialize();
+    void serialize(std::string & in_string);
     //反序列化
-    void unserialize();
+    void unserialize(std::string & out_string);
     ~data();
-  private:
+ // private:
     std::string nick_name;
     std::string school;
     std::string message;

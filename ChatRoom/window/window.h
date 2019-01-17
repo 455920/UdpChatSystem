@@ -1,4 +1,5 @@
 #pragma once 
+#include <unistd.h>
 
 #include <iostream>
 #include <ncurses.h>
@@ -15,8 +16,15 @@ class window
     void draw_flist();
     //画输入窗口
     void draw_input();
+
+    void put_string_to_window(WINDOW* win,int y,int x,const std::string &msg);
+    
+    void refresh_win(WINDOW* win);
+
+     
+    void get_string_from_window(WINDOW* win,std::string &msg);
     ~window();
-  private:
+  //private:
     WINDOW *header;
     WINDOW *output;
     WINDOW *flist;

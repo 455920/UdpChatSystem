@@ -47,6 +47,4 @@ int main(int argc,char *argv[])
   pthread_create(&r,NULL,send_message,(void*)&ser);
   pthread_join(r,NULL);
   pthread_join(r,NULL);
-
-
 }

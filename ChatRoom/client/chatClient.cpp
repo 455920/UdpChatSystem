@@ -40,7 +40,7 @@ void send_quit(int sig)
   data d;
   d.nick_name = cw.nick_name;
   d.school = cw.school;
-  d.message="None";
+  d.message="quit";
   d.type="quit";
   std::string out_string;
   d.serialize(out_string);
@@ -54,8 +54,11 @@ static void del_user(std::string& f)
   std::vector<std::string>::iterator iter = friends.begin();
   for(;iter!=friends.end();iter++)
   {
-    if(*iter!=f)
+    if(*iter==f)
+    {
         friends.erase(iter); 
+        return;
+    }   
   }
 }
 
@@ -121,16 +124,13 @@ void* run_output_flist(void *arg)
      cp->recv_data(out_string);
      d.unserialize(out_string);//获得的数据反序列化
   
-     if(d.type=="quit")
-     {
-        del_user(d.nick_name);
-     }
-     {
        show_string = d.nick_name;
        show_string +="-";
        show_string +=d.school;
-       
-       add_user(show_string);
+       if(d.type=="quit")
+         del_user(show_string);
+       else
+         add_user(show_string);
     
        show_string +="#";
        show_string +=d.message;
@@ -141,8 +141,8 @@ void* run_output_flist(void *arg)
        {
         i=1;
          w->draw_output();
-        }
       }
+      
 
      //每次都重新绘制好友列表
      w->draw_flist();

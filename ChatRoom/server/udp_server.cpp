@@ -32,7 +32,7 @@ void udp_server::init_server()
 
 udp_server::~udp_server()
 {
-    
+        
 }
 
 //我们认为收到都是一个字符串
@@ -52,6 +52,7 @@ void udp_server::recv_data(std::string &out_string)
     d.unserialize(out_string);
     if(d.type=="quit")
     {
+       std::cout<<"a client qut"<<std::endl;
         std::map<uint32_t,struct sockaddr_in>::iterator iter = online.find(peer.sin_addr.s_addr);
         if(iter!=online.end()) 
         {

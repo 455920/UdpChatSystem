@@ -52,7 +52,7 @@ void udp_server::recv_data(std::string &out_string)
   }
   else 
   {
-     
+         
   }
 }
 

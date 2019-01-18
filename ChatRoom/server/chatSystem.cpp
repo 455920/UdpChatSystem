@@ -24,7 +24,7 @@ void *send_message(void* arg)
   udp_server *sp = (udp_server*)arg;
   while(1)
   {
-    //sp->broadcast();
+    sp->broadcast();
     sleep(1);
   }
 }

@@ -51,15 +51,15 @@ data::~data()
 
 }
 
-
-int main()
-{
-  data d;
-  d.nick_name = "平凡";
-  d.school="XUST";
-  d.message="hello";
-  d.type="None";
-  std::string out_string;
-  d.serialize(out_string);//序列化成out_string
-  std::cout<<out_string<<std::endl;
-}
+//
+//int main()
+//{
+//  data d;
+//  d.nick_name = "平凡";
+//  d.school="XUST";
+//  d.message="hello";
+//  d.type="None";
+//  std::string out_string;
+//  d.serialize(out_string);//序列化成out_string
+//  std::cout<<out_string<<std::endl;
+//}

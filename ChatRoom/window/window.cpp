@@ -52,7 +52,7 @@ void window::draw_flist()
   int  h =LINES*3/5;
   int w = COLS/4;
   flist = newwin(h,w,y,x);
-  box(flist,'*','.');//0 0 是改变窗口风格
+  box(flist,'.','.');//0 0 是改变窗口风格
 }
 void window::draw_input()
 {
@@ -61,7 +61,7 @@ void window::draw_input()
   int  h =LINES/5;
   int w = COLS;
   input = newwin(h,w,y,x);
-  box(input,'^','.');//0 0 是改变窗口风格
+  box(input,'.','.');//0 0 是改变窗口风格
 }
 window::~window()
 {
@@ -71,27 +71,27 @@ window::~window()
   delwin(input);
   endwin();//结束之前画的窗口
 }
-
-void* act_1(void *arg);
-
-
-int main()
-{
-  window w;
-  w.draw_input();
-  std::string message ="Please Enter#";
-  std::string str;
-  int x,y;
-  int i=1;
-  while(1)
-  {
-    w.draw_input();
-    w.put_string_to_window(w.input,1,2,message);
-    w.refresh_win(w.input);
-    w.get_string_from_window(w.input,str);
-  }
-}
-
+//
+//void* act_1(void *arg);
+//
+//
+//int main()
+//{
+//  window w;
+//  w.draw_input();
+//  std::string message ="Please Enter#";
+//  std::string str;
+//  int x,y;
+//  int i=1;
+//  while(1)
+//  {
+//    w.draw_input();
+//    w.put_string_to_window(w.input,1,2,message);
+//    w.refresh_win(w.input);
+//    w.get_string_from_window(w.input,str);
+//  }
+//}
+//
 
 
 //  window w;

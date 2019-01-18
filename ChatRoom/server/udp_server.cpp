@@ -1,4 +1,5 @@
 #include "udp_server.h"
+#include "data.h"
 
 
 
@@ -47,8 +48,21 @@ void udp_server::recv_data(std::string &out_string)
     out_string=buf;
     //把数据放入数据池
     pool.put_message(out_string);
+    data d;
+    d.unserialize(out_string);
+    if(d.type=="quit")
+    {
+        std::map<uint32_t,struct sockaddr_in>::iterator iter = online.find(peer.sin_addr.s_addr);
+        if(iter!=online.end()) 
+        {
+          online.erase(iter->first);
+        }
+    }
+    else 
+    {
     //map本身就有查重
     online.insert(std::pair<uint32_t,struct sockaddr_in>(peer.sin_addr.s_addr,peer));
+    } 
   }
   else 
   {

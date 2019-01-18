@@ -1,9 +1,12 @@
 #include "udp_client.h"
+#include <signal.h>
 #include "window.h"
 #include "data.h"
 
 using namespace std;
 
+
+bool flag_quit=0;
 
 std::vector<std::string> friends;
 
@@ -32,26 +35,29 @@ typedef struct
 }client_t;
 client_t cw; 
 
-//void send_quit(int sig)
-//{
-//  data d;
-//  d.nick_name = cw.nick_name;
-//  d.shool = cw.school;
-//  d.message="None";
-//  d.type="quit";
-//  std::string out_string;
-//  d.serialize(out_string);
-//  cw.clientp->send_data(out_string); 
-//}
-////
-//static void del_user(std::string& f)
-//{
-//  std::vector<std::string>::iterator iter = friends.begin();
-//  for(;iter!=friends.end;iter++)
-//  {
-//    
-//  }
-//}
+void send_quit(int sig)
+{
+  data d;
+  d.nick_name = cw.nick_name;
+  d.school = cw.school;
+  d.message="None";
+  d.type="quit";
+  std::string out_string;
+  d.serialize(out_string);
+  cw.clientp->send_data(out_string); 
+  flag_quit=1;
+}
+
+
+static void del_user(std::string& f)
+{
+  std::vector<std::string>::iterator iter = friends.begin();
+  for(;iter!=friends.end();iter++)
+  {
+    if(*iter!=f)
+        friends.erase(iter); 
+  }
+}
 
 void* run_header(void *arg)
 {
@@ -112,24 +118,31 @@ void* run_output_flist(void *arg)
   std::string out_string;
   while(1)
   {
-    cp->recv_data(out_string);
-    d.unserialize(out_string);//获得的数据反序列化
-    show_string = d.nick_name;
-    show_string +="-";
-    show_string +=d.school;
+     cp->recv_data(out_string);
+     d.unserialize(out_string);//获得的数据反序列化
+  
+     if(d.type=="quit")
+     {
+        del_user(d.nick_name);
+     }
+     {
+       show_string = d.nick_name;
+       show_string +="-";
+       show_string +=d.school;
+       
+       add_user(show_string);
     
-    add_user(show_string);
-
-    show_string +="#";
-    show_string +=d.message;
-    getmaxyx(w->output,y,x);
-    w->put_string_to_window(w->output,i++,2,show_string);
-    w->refresh_win(w->output);
-    if(i>= y-1)
-    {
-      i=1;
-      w->draw_output();
-    }
+       show_string +="#";
+       show_string +=d.message;
+       getmaxyx(w->output,y,x);
+       w->put_string_to_window(w->output,i++,2,show_string);
+       w->refresh_win(w->output);
+       if(i>= y-1)
+       {
+        i=1;
+         w->draw_output();
+        }
+      }
 
      //每次都重新绘制好友列表
      w->draw_flist();
@@ -187,6 +200,9 @@ int main(int argc,char * argv[])
     Usage(argv[0]);
     return 1;
   }
+
+  signal(SIGINT,send_quit);
+  
   udp_client cli(argv[1],atoi(argv[2]));
   std::cout<<"Please Enter Your Nick Name>";
   std::cin>>cw.nick_name;
@@ -198,14 +214,21 @@ int main(int argc,char * argv[])
   cw.winp=&w;
   std::string message;
 
+
+  // 
+
+
  pthread_t header,output_flist,input;
  pthread_create(&header,NULL,run_header,(void*)&cw);//传参比较合理
  pthread_create(&input,NULL,run_input,(void*)&cw);
  pthread_create(&output_flist,NULL,run_output_flist,(void*)&cw);
  
- pthread_join(header,NULL);
- pthread_join(input,NULL);
- pthread_join(output_flist,NULL);
-
+  while(!flag_quit)
+  {
+    sleep(1);
+  }
+  pthread_cancel(header);
+  pthread_cancel(output_flist);
+  pthread_cancel(input);
   return 0;
 }
